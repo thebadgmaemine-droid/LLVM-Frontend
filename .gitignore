@@ -1,0 +1,14 @@
+# Build directories
+build/
+build-local/
+out/
+CMakeFiles/
+CMakeCache.txt
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+ZERO_CHECK.vcxproj*
+ALL_BUILD.vcxproj*
+cmake_install.cmake
+*.sln
+.vs/
