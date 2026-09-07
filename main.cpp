@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-// Copyright (c) [Year] [Your Name/Organization]. All rights reserved.
 
 #include "ExprAST.h"
 
