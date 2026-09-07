@@ -5,13 +5,17 @@
 
 int main() {
 	BinopPrecedence['<'] = 10;
-  	BinopPrecedence['+'] = 20;
-  	BinopPrecedence['-'] = 20;
-  	BinopPrecedence['*'] = 40;
-	codegenprepare;
-/* codegenprepare: Optimize for code generation
-This pass munges the code in the input function to better prepare it for SelectionDAG-based code generation. 
-This works around limitations in its basic-block-at-a-time approach. It should eventually be removed.*/
-	return 0;
-	
+	BinopPrecedence['+'] = 20;
+	BinopPrecedence['-'] = 20;
+	BinopPrecedence['*'] = 40;
+
+	getNextToken();
+	if (Curtok == static_cast<int>(Token::tok_eof))
+		return 0;
+
+	if (auto Expression = ParseExpression()) {
+		std::cout << Expression->dump() << '\n';
+		return Curtok == static_cast<int>(Token::tok_eof) ? 0 : 1;
+	}
+	return 1;
 }

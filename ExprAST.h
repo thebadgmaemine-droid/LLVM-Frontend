@@ -1,61 +1,72 @@
-// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-// Copyright (c) [Year] [Your Name/Organization]. All rights reserved.
-
-// ExprAST: The base class
 #ifndef EXPRAST_H_
 #define EXPRAST_H_
 
+#include <cctype>
+#include <cstdlib>
+#include <iostream>
+#include <map>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <utility>
 #include <vector>
-#include <cctype>
-#include <cstdio>
-#include <cstdlib>
-#include <map>
-#include <iostream>
-#include <string>
+#include "llvm/ADT/APFloat.h"
+#include "llvm/ADT/STLExtras.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Type.h"
+#include "llvm/IR/Verifier.h"
 
+enum class Token { tok_eof = -1, tok_def = -2, tok_extern = -3,
+                   tok_identifier = -4, tok_number = -5 };
 
+inline std::string IdentifierStr;
+inline double NumVal = 0.0;
 
-
-
-
-
-using namespace LLVM;
-// Tokens and class hierarchy ~ Lexer
-enum class Token {
-    tok_eof = -1,
-    // cmds
-    tok_def = -2,
-    tok_extern = -3,
-    // primary
-    tok_identifier = -4,
-    tok_number = -5,
-};
-// Idet, and token calling
-static std::string IdentifierStr;
-static double NumVal;
-static int gettok() {
+inline int gettok() {
     static int LastChar = ' ';
+    while (std::isspace(static_cast<unsigned char>(LastChar)))
+        LastChar = std::getchar();
+    if (LastChar == EOF)
+        return static_cast<int>(Token::tok_eof);
 
-    while (isspace(LastChar))
-        LastChar = getchar();
-
-    if (isalpha(LastChar)) {
-        IdentifierStr = LastChar;
-        while (isalnum(LastChar = getchar()))
-            IdentifierStr += LastChar;
-
-        if (IdentifierStr == "DEFINE") return static_cast<int>(Token::tok_def);
-        if (IdentifierStr == "PROCEDURE") return static_cast<int>(Token::tok_def);
-        if (IdentifierStr == "EXTERN") return static_cast<int>(Token::tok_extern);
+    if (std::isalpha(static_cast<unsigned char>(LastChar)) || LastChar == '_') {
+        IdentifierStr.clear();
+        do {
+            IdentifierStr += static_cast<char>(LastChar);
+            LastChar = std::getchar();
+        } while (std::isalnum(static_cast<unsigned char>(LastChar)) || LastChar == '_');
+        if (IdentifierStr == "DEFINE" || IdentifierStr == "PROCEDURE")
+            return static_cast<int>(Token::tok_def);
+        if (IdentifierStr == "EXTERN")
+            return static_cast<int>(Token::tok_extern);
         return static_cast<int>(Token::tok_identifier);
     }
 
-    // still need: digits, EOF, and fallback single-char tokens
+    if (std::isdigit(static_cast<unsigned char>(LastChar)) || LastChar == '.') {
+        std::string Number;
+        bool HasDot = false;
+        do {
+            if (LastChar == '.')
+                HasDot = true;
+            Number += static_cast<char>(LastChar);
+            LastChar = std::getchar();
+        } while (std::isdigit(static_cast<unsigned char>(LastChar)) ||
+                 (!HasDot && LastChar == '.'));
+        NumVal = std::strtod(Number.c_str(), nullptr);
+        return static_cast<int>(Token::tok_number);
+    }
+
+    const int ThisChar = LastChar;
+    LastChar = std::getchar();
+    return ThisChar;
 }
-// Idet, and token callin
+
 class ExprAST {
     public:
     virtual ~ExprAST() = default;
@@ -347,11 +358,7 @@ Function *PrototypeAST::codegen() {
 unsigned Idx = 0;
 for ( auto &Arg : F->args())
     Arg.setName(Args[Idx++]);
-return F; 
-
-Function *FunctionAST::codegen() {
-    
-}
+    return F; 
 
 
 

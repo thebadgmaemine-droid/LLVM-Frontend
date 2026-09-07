@@ -1,0 +1,42 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "llvm-debug",
+      "displayName": "LLVM Debug",
+      "description": "Configure the frontend with an installed LLVM package.",
+      "generator": "Visual Studio 18 2026",
+      "binaryDir": "${sourceDir}/build-configure",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl",
+        "LLVM_DIR": {
+          "type": "PATH",
+          "value": "$env{LLVM_DIR}"
+        }
+      }
+    },
+    {
+      "name": "llvm-wsl-debug",
+      "displayName": "LLVM Debug (WSL)",
+      "description": "Configure the frontend with LLVM installed in Ubuntu on WSL.",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build-wsl",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "LLVM_DIR": "/usr/lib/llvm-21/lib/cmake/llvm"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "llvm-debug",
+      "configurePreset": "llvm-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "llvm-wsl-debug",
+      "configurePreset": "llvm-wsl-debug"
+    }
+  ]
+}

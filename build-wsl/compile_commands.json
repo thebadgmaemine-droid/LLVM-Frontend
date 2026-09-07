@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/mnt/d/DDE/LLVM-Pseudocode-Frontend/build-wsl",
+  "command": "/usr/bin/clang++  -isystem /usr/lib/llvm-21/include -g -std=c++17   -D_GNU_SOURCE -DEXPERIMENTAL_KEY_INSTRUCTIONS -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -o CMakeFiles/DDE.dir/main.cpp.o -c /mnt/d/DDE/LLVM-Pseudocode-Frontend/main.cpp",
+  "file": "/mnt/d/DDE/LLVM-Pseudocode-Frontend/main.cpp",
+  "output": "CMakeFiles/DDE.dir/main.cpp.o"
+}
+]
